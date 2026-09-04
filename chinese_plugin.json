@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "author": "Poi",
+    "description": "Repo extension riêng"
+  },
+  "data": [
+    {
+      "name": "69shuba",
+      "author": "Poi",
+      "path": "https://raw.githubusercontent.com/USERNAME/REPO/main/plugin.zip",
+      "version": 1,
+      "source": "https://www.69shuba.com",
+      "icon": "https://raw.githubusercontent.com/USERNAME/REPO/main/icon.png",
+      "description": "Đọc truyện raw trên 69书吧 (69shuba)",
+      "type": "chinese_novel",
+      "locale": "zh_CN"
+    }
+  ]
+}
