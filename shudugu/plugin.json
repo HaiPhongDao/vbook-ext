@@ -3,7 +3,7 @@
     "id": "shudugu",
     "name": "速读谷 (shudugu)",
     "author": "Poi",
-    "version": "6",
+    "version": "7",
     "source": "https://www.shudugu.org",
     "regexp": "(www\\.)?(shudugu|sudugu)\\.org/\\d+(/\\d+\\.html)?/?",
     "description": "Đọc truyện raw tiếng Trung giản thể trên 速读谷 (shudugu.org)",

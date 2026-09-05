@@ -1,9 +1,51 @@
 load('config.js');
 
 // Noi dung chuong nam trong <div class="con">, da chia san bang the <p>.
-// Da do tren mot chuong that: 56 the <p>, khong co <div> con nao ben trong
-// -> khong can go rac cau truc nhu ban 69shuba (.txtinfo, #txtright, .page1...).
+//
+// CHUONG BI PHAN TRANG. Trang sau co duoi '-<n>' truoc '.html':
+//   /2349/1181835.html    -> 524 ky tu  + link 下一页 -> 1181835-2.html
+//   /2349/1181835-2.html  -> 827        + 下一页 -> -3
+//   /2349/1181835-3.html  -> 547        + 下一页 -> -4
+//   /2349/1181835-4.html  -> 625        + KHONG con 下一页  (trang cuoi)
+//   Tong 2523 ky tu; chi lay trang dau la mat 80% chuong.
+//
+// Khac muc luc o mot diem quan trong: trang ngoai pham vi (vd -9.html) tra ve
+// div.con RONG chu khong quay vong ve trang 1, nen vong lap tu dung duoc.
+// Van giu them chan chan "khong them doan nao thi dung" cho chac.
 let CONTENT_SELECTOR = 'div.con';
+let MAX_PAGES = 20;
+
+// Bo duoi '-<n>' de lay URL trang dau, roi tu dung lai tung trang.
+// An toan hon ghep chuoi tuong doi tu href cua the <a>.
+function basePage(url) {
+    return String(url).replace(/-\d+\.html$/, '.html');
+}
+
+function pageUrl(base, n) {
+    return n <= 1 ? base : base.replace(/\.html$/, '-' + n + '.html');
+}
+
+// Link 下一页 co dang '/2349/1181835-3.html'. Lay SO trang trong duoi '-<n>'.
+// Tren trang cuoi khong co the nay -> tra -1.
+// Neu site doi 下一页 thanh link sang chuong khac (khong co duoi -N) thi regex
+// cung khong khop -> dung, dung hon la di lac sang chuong sau.
+function nextPageNum(doc) {
+    let n = -1;
+    doc.select('a').forEach(e => {
+        if (n > 0) {
+            return;
+        }
+        let t = e.text();
+        if (t && t.indexOf('下一页') !== -1) {
+            let href = e.attr('href');
+            let m = href ? href.match(/-(\d+)\.html/) : null;
+            if (m) {
+                n = parseInt(m[1], 10);
+            }
+        }
+    });
+    return n;
+}
 
 // Dong rac hay bi chen giua van ban: ten site, loi keu doc tiep, dieu huong.
 function isJunk(t) {
@@ -13,26 +55,17 @@ function isJunk(t) {
     if (/速读谷|shudugu|sudugu\.org/i.test(t)) {
         return true;
     }
-    if (/^(上一章|下一章|目录|加入书签|推荐本书|返回目录)$/.test(t)) {
+    if (/^(上一章|下一章|上一页|下一页|目录|加入书签|推荐本书|返回目录)$/.test(t)) {
         return true;
     }
-    // Dong chi co dau cau hoac ky tu trang tri
     if (/^[\s　.。·…—\-_*]+$/.test(t)) {
         return true;
     }
     return false;
 }
 
-// Gop doan ngan thanh khoi dai: vBook doc TTS theo tung doan, moi doan la mot luot
-// doc rieng co do tre khoi dong -> cang it doan cang it bi ngat.
-//
-// MAC DINH TAT. Ban dau bung nguyen MERGE_MIN=600 tu ext 69shuba sang, ket qua la
-// 63 doan goc bi ep con 4 khoi ~600 ky tu noi bang dau cach -> doc bang mat thay
-// chu dinh lien mot mang, khong xuong dong.
-//
-// Khi BAT gop, noi bang <br> chu khong phai dau cach: nhu vay du gop van con cach
-// dong khi doc bang mat. (Chua kiem duoc vBook co tach TTS tai <br> hay khong - neu
-// co thi bat gop se khong con tac dung cho TTS, nhung hien thi thi khong bao gio hong.)
+// Gop doan ngan thanh khoi dai cho TTS. Mac dinh TAT - xem NOTES.
+// Khi bat, noi bang <br> chu khong phai dau cach, de van con cach dong khi doc mat.
 function merge(parts, min) {
     if (min <= 0) {
         return parts;
@@ -53,18 +86,15 @@ function merge(parts, min) {
     return out;
 }
 
-function execute(url) {
-    let doc = getDoc(url);
-    if (!doc) {
-        return Response.error('[chap] Không tải được chương: ' + abs(url));
-    }
+// Lay cac doan cua MOT trang. Tra ve mang rong neu trang khong co noi dung.
+function grabPage(doc) {
+    let parts = [];
 
     let box = doc.select(CONTENT_SELECTOR);
     if (box.size() === 0) {
-        return Response.error('[chap] Không thấy "' + CONTENT_SELECTOR + '" trong: ' + abs(url));
+        return parts;
     }
 
-    let parts = [];
     box.select('p').forEach(p => {
         let t = p.text();
         t = t ? t.trim() : '';
@@ -86,14 +116,47 @@ function execute(url) {
         }
     }
 
-    if (parts.length === 0) {
-        return Response.error('[chap] Chương rỗng sau khi lọc: ' + abs(url));
+    return parts;
+}
+
+function execute(url) {
+    let base = basePage(url);
+    let all = [];
+    let page = 1;
+    let pages = 0;
+
+    while (page > 0 && pages < MAX_PAGES) {
+        pages++;
+        let path = pageUrl(base, page);
+
+        let doc = getDoc(path);
+        if (!doc) {
+            // Mat mang giua chung: tra ve phan da lay con hon bo trang
+            console.log('[chap] không tải được ' + path + ', dừng ở ' + all.length + ' đoạn');
+            break;
+        }
+
+        let got = grabPage(doc);
+        if (got.length === 0) {
+            break;
+        }
+
+        for (let i = 0; i < got.length; i++) {
+            all.push(got[i]);
+        }
+
+        page = nextPageNum(doc);
+    }
+
+    if (all.length === 0) {
+        return Response.error('[chap] Không lấy được nội dung: ' + abs(base));
     }
 
     let min = mergeMin();
-    let blocks = merge(parts, min);
-    console.log('[chap] ' + parts.length + ' đoạn gốc -> ' + blocks.length + ' khối'
-        + (min > 0 ? ' (gộp >=' + min + ')' : ' (giữ nguyên đoạn)'));
+    let blocks = merge(all, min);
+    console.log('[chap] ' + all.length + ' đoạn / ' + pages + ' trang -> ' + blocks.length
+        + ' khối' + (min > 0 ? ' (gộp >=' + min + ')' : ''));
+
     let html = '';
     for (let i = 0; i < blocks.length; i++) {
         html = html + '<p>' + blocks[i] + '</p>';

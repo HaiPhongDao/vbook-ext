@@ -266,6 +266,55 @@ Tên trong lưới kèm số truyện, ví dụ `Đô thị (1062)`.
 
 ---
 
+## Nội dung chương CŨNG bị phân trang
+
+**Lỗi nặng nhất của bản này, sửa 2026-09-06 (v7).** Không chỉ mục lục — **nội dung
+chương cũng chia trang**, dùng đuôi **gạch ngang** trước `.html`:
+
+| Trang | Ký tự | Link `下一页` |
+|---|---|---|
+| `/2349/1181835.html` | 524 | → `1181835-2.html` |
+| `/2349/1181835-2.html` | 827 | → `-3` |
+| `/2349/1181835-3.html` | 547 | → `-4` |
+| `/2349/1181835-4.html` | 625 | **không có** (trang cuối) |
+| **Tổng** | **2523** | |
+
+Chỉ lấy trang đầu là **mất 80% chương**.
+
+Mức thiệt hại thật sau khi sửa:
+
+| Chương | Trước | Sau |
+|---|---|---|
+| `2349/1181835` | 693 | **2523** |
+| `51/3194` | 2368 | **7618** |
+
+### Vì sao lọt lưới suốt mấy vòng test
+
+Lúc dựng ext, tôi so nội dung trả về (2368) với `div.con` đo tay (2288) rồi kết luận
+"không mất nội dung, còn dư vì thêm thẻ `<p>`". **Phép so đó vô giá trị**: cả hai đều
+chỉ là **trang 1**. So kết quả với chính cái nguồn cũng thiếu thì không chứng minh
+được gì.
+
+Bài học lặp lại lần thứ ba trong dự án này (sau `/book/<id>/` của 69shuba và mục lục
+999 chương): **muốn biết có thiếu không, phải tìm mốc độc lập** — ở đây là nhãn
+`第N章` của chương cuối, hoặc link `下一页`. Đừng so với số do chính mình đo bằng
+cùng một giả định.
+
+### Điều kiện dừng
+
+Khác mục lục ở chỗ quan trọng: trang ngoài phạm vi (vd `-9.html`) trả về `div.con`
+**rỗng**, không quay vòng về trang 1. Nên vòng lặp tự dừng được. Vẫn giữ cả hai chốt:
+
+1. Không còn link `下一页` (lấy số trang từ đuôi `-(\d+)\.html`)
+2. Trang không cho thêm đoạn nào
+
+Cộng `MAX_PAGES = 20`. Nếu `下一页` trỏ sang link không có đuôi `-N` (chuyển chương)
+thì regex không khớp → dừng, đúng hơn là đi lạc sang chương sau.
+
+Số request: chương 1 trang tốn 1, chương 4 trang tốn 4.
+
+---
+
 ## Nội dung chương: giữ nguyên đoạn (đừng bê MERGE_MIN từ ext khác sang)
 
 **Lỗi đã sửa 2026-09-06.** Bản đầu bê nguyên `MERGE_MIN = 600` từ `vbook-69shuba`
