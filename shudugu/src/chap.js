@@ -122,16 +122,27 @@ function grabPage(doc) {
 function execute(url) {
     let base = basePage(url);
     let all = [];
+    let seen = {};
+    let visited = {};
     let page = 1;
     let pages = 0;
 
     while (page > 0 && pages < MAX_PAGES) {
+        // CHONG CHAY VONG TRON. Trang ngoai pham vi co the tra ve lai trang 1 (muc luc
+        // cua site nay da lam dung the). Khi do 下一页 cua no tro ve -2, va vong lap
+        // quay 2->3->4->2->3->4... toi khi cham tran, nhan ve noi dung trung lap va
+        // ban pha site hang chuc request moi chuong -> bi chan IP (302 sang google.com).
+        if (visited[page]) {
+            break;
+        }
+        visited[page] = true;
+
         pages++;
         let path = pageUrl(base, page);
 
         let doc = getDoc(path);
         if (!doc) {
-            // Mat mang giua chung: tra ve phan da lay con hon bo trang
+            // Mat mang hoac bi chan giua chung: tra ve phan da lay con hon bo trang
             console.log('[chap] không tải được ' + path + ', dừng ở ' + all.length + ' đoạn');
             break;
         }
@@ -140,6 +151,15 @@ function execute(url) {
         if (got.length === 0) {
             break;
         }
+
+        // Nhan dang trang bang van tay CA TRANG, khong khu trung tung doan.
+        // Khu trung tung doan se an nham cac cau lap lai hop le trong van ban
+        // (do tren mot chuong that: 110 doan bi con 106).
+        let fp = got.join('');
+        if (seen[fp]) {
+            break;
+        }
+        seen[fp] = true;
 
         for (let i = 0; i < got.length; i++) {
             all.push(got[i]);

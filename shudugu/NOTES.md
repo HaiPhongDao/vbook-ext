@@ -300,6 +300,58 @@ Bài học lặp lại lần thứ ba trong dự án này (sau `/book/<id>/` c�
 `第N章` của chương cuối, hoặc link `下一页`. Đừng so với số do chính mình đo bằng
 cùng một giả định.
 
+### Rate limit của site — phạt bằng cách đá sang Google
+
+Site có bộ giới hạn tần suất **của riêng nó** (server IIS, không phải Cloudflare).
+Khi vượt ngưỡng, mọi đường dẫn trả:
+
+```
+HTTP/1.1 302
+Location: https://www.google.com/
+```
+
+Kể cả trang chủ. Nghỉ 10-15 phút thì tự hết, hoặc đổi IP.
+
+**Đây nhiều khả năng là nguyên nhân của triệu chứng "đọc 3-5 chương lại phải bấm tải
+lại"** mà người dùng báo — và nó có từ TRƯỚC khi thêm phân trang chương, nên không
+phải do số request mỗi chương. Việc bấm tải lại có tác dụng chỉ vì lúc đó đã nghỉ đủ lâu.
+
+Giảm nhẹ: trong vBook nâng **"Giãn cách kết nối"** từ mặc định 10ms lên **300-500ms**.
+
+### BẪY: vòng lặp trang chương chạy vòng tròn
+
+**Lỗi tôi tự tạo ra ở v7, sửa ở v8.** Trang ngoài phạm vi của MỘT SỐ chương trả về
+lại **trang 1** (không phải rỗng như chương tôi thử lúc đầu). Khi đó `下一页` của nó
+trỏ về `-2`, và vòng lặp quay **2 → 3 → 4 → 2 → 3 → 4…** tới khi chạm `MAX_PAGES`.
+
+Hậu quả đo được trên chương `/2349/1181227.html`:
+
+| | v7 | v8 |
+|---|---|---|
+| Kết quả | **500 đoạn / 20 trang** | 102 đoạn / 4 trang |
+
+Tức mỗi chương bắn 20 request và trả về nội dung lặp 5 lần. Ba chương như vậy là đủ
+53 request và bị chặn IP ngay.
+
+**Chốt chặn hiện tại, cả ba đều cần:**
+
+1. `visited[page]` — quay lại số trang đã đọc thì dừng. **Đây là chốt chính**, nó cắt
+   đúng chu trình.
+2. Vân tay **cả trang** (`got.join('')`) — trang lặp nguyên vẹn thì dừng.
+3. `MAX_PAGES = 20` — chốt cuối.
+
+**Đừng khử trùng theo từng đoạn.** Đã thử và nó ăn nhầm các câu lặp hợp lệ trong văn
+bản: một chương 110 đoạn bị còn 106. Vân tay cả trang thì không mất chữ.
+
+### Cảnh giác: công cụ đo hỏng trông y như site hỏng
+
+Trong lúc truy lỗi này, một regex Python `<div class="con">(.*?)</div>` khớp hụt (thẻ
+thật có thêm thuộc tính) khiến 9 trang liên tiếp báo `len=0`, trông hệt như đang bị
+chặn IP. Thực tế trang tải bình thường: 6340 byte, 32 thẻ `<p>`.
+
+Trước khi kết luận "site chặn", hãy kiểm bằng thứ độc lập với parser — mã HTTP,
+`Content-Length`, hoặc `grep` thẳng chuỗi `class="con"` trong HTML thô.
+
 ### Điều kiện dừng
 
 Khác mục lục ở chỗ quan trọng: trang ngoài phạm vi (vd `-9.html`) trả về `div.con`
