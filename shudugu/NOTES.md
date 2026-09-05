@@ -423,6 +423,49 @@ hoàn toàn.
 
 ---
 
+## Rà soát code v11 — bốn lỗi tìm được
+
+**1. `fetch` thiếu `timeout` (nguy hiểm nhất).** API vBook có tuỳ chọn `timeout` mà
+`getDoc()` không dùng. Một request treo sẽ treo **cả script** cho tới khi vBook giết nó,
+và lúc đó app chỉ hiện `"Không thể tải nội dung."` — thông báo mặc định — chứ không hiện
+được `Response.error`. Đây khớp đúng triệu chứng: lỗi ngẫu nhiên, không bám chương nào,
+bấm tải lại là được.
+
+Đã đặt `TIMEOUT = 10000`. Request bình thường mất 1-2s nên 10s là rất rộng; treo thì
+hỏng nhanh để cơ chế thử-lại của `chap.js` kịp cứu.
+
+**2. `detail.js` dùng `Elements.text()` cho tên và tác giả.** Hàm này của jsoup **nối
+text của MỌI phần tử khớp**. Đã có `firstText()` trong `config.js` viết đúng vì lý do
+này, nhưng `detail.js` lại quên dùng. Đã đổi.
+
+**3. `detail.js` lấy tác giả theo `href*="/zuozhe/"`.** Đúng cái lỗi đã sửa ở
+`parseList` nhưng bỏ sót file này. Giờ tìm theo chữ `作者：` trước, href chỉ làm đường lui.
+
+**4. `findNext()` gọi `abs(href)` với href tương đối.** `abs()` không biết thư mục hiện
+tại: `abs('p-2.html')` ra `BASE_URL + '/p-2.html'` — sai. Chưa lộ vì trang thể loại dùng
+`/xuanhuan/2.html` (từ gốc), nhưng là bẫy nằm chờ. Giờ chỉ nhận href bắt đầu bằng `/`
+hoặc `http`.
+
+### Về tốc độ
+
+Đã đo và **không tìm thấy chỗ nào code làm chậm một cách không cần thiết**. Chi phí nằm
+ở số request, và số đó là bắt buộc:
+
+| Script | Request | Bỏ được không? |
+|---|---|---|
+| `detail.js` | 1 | — |
+| `list.js` | 1 | — |
+| `chap.js` | 4 | Không: thiếu là mất ~80% chương |
+| `toc.js` | 1 mỗi 999 chương | Không: thiếu là cụt mục lục |
+
+Đã kiểm và loại: không có host mobile, không có `_all.html`, `?p=all` / `?full=1` đều bị
+bỏ qua. Không có cách lấy cả chương trong một request.
+
+Chỗ duy nhất còn tối ưu được là dùng `page.js` chẻ mục lục truyện dài (3473 chương mất
+~15s một lần gọi) thành nhiều lần gọi nhẹ. Đổi lại tổng request tăng gấp đôi. Chưa làm.
+
+---
+
 ## Bốn cái bẫy — đọc trước khi sửa
 
 **1. Tìm kiếm không nằm ở đường dẫn đoán được.**

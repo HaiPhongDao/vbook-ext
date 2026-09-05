@@ -48,9 +48,17 @@ function absImg(url) {
     return BASE_URL + (url.charAt(0) === '/' ? url : '/' + url);
 }
 
+// timeout LA BAT BUOC. Khong dat thi mot request treo se treo ca script cho toi khi
+// vBook giet no, va luc do app chi hien "Khong the tai noi dung." (thong bao mac dinh)
+// chu khong hien duoc Response.error. Dat nguong thi request treo hong nhanh, de
+// co che thu lai o chap.js kip cuu.
+// Do thuc te: mot request binh thuong mat 1-2s, nen 10s la du rong.
+let TIMEOUT = 10000;
+
 function getDoc(url) {
     let response = fetch(abs(url), {
         method: 'GET',
+        timeout: TIMEOUT,
         headers: {
             'User-Agent': UA,
             'Referer': BASE_URL + '/'
@@ -299,7 +307,11 @@ function findNext(doc) {
         let t = e.text();
         if (t && (t.indexOf('下一页') !== -1 || t.indexOf('下页') !== -1)) {
             let href = e.attr('href');
-            if (href && href.indexOf('javascript') !== 0 && href !== '#') {
+            // CHI nhan duong dan tu goc ('/...') hoac URL tuyet doi.
+            // abs() khong biet thu muc hien tai: abs('p-2.html') ra
+            // BASE_URL + '/p-2.html' - SAI. Trang the loai dung '/xuanhuan/2.html'
+            // nen hien chua lo, nhung tha bo qua con hon tra ve URL sai.
+            if (href && (href.charAt(0) === '/' || href.indexOf('http') === 0)) {
                 next = abs(href);
             }
         }

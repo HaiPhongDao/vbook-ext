@@ -19,16 +19,32 @@ function execute(url) {
         return Response.error('[detail] Không tải được trang truyện: ' + abs(bookUrl(id)));
     }
 
-    let name = doc.select('.itemtxt h1 a').text();
-    if (!name || name.trim().length === 0) {
-        name = doc.select('.itemtxt h3 a').text();
+    // firstText() chu khong phai .text(): Elements.text() cua jsoup NOI text cua MOI
+    // phan tu khop, nen neu trang co hon mot the khop thi ten truyen se bi dinh lien.
+    let name = firstText(doc, '.itemtxt h1 a');
+    if (!name) {
+        name = firstText(doc, '.itemtxt h3 a');
     }
-    name = name ? name.trim() : '';
     if (name.length === 0) {
         return Response.error('[detail] Không đọc được tên truyện: ' + abs(bookUrl(id)));
     }
 
-    let author = stripLabel(doc.select('.itemtxt a[href*="/zuozhe/"]').text());
+    // Tac gia: uu tien tim theo CHU '作者：' giong parseList.
+    // Chon theo href '/zuozhe/' chi dung tren trang truyen va trang tim kiem; cac
+    // trang khac link tac gia tro ve chinh truyen. Giu href lam duong lui thoi.
+    let author = '';
+    doc.select('.itemtxt p').forEach(p => {
+        if (author) {
+            return;
+        }
+        let t = p.text();
+        if (t && /^\s*作者\s*[：:]/.test(t)) {
+            author = stripLabel(t.trim());
+        }
+    });
+    if (!author) {
+        author = stripLabel(firstText(doc, '.itemtxt a[href*="/zuozhe/"]'));
+    }
     let cover = absImg(doc.select('div.item img').attr('src'));
     if (!cover) {
         cover = absImg(doc.select('img').attr('src'));
