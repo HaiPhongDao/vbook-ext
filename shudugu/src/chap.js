@@ -13,7 +13,30 @@ load('config.js');
 // div.con RONG chu khong quay vong ve trang 1, nen vong lap tu dung duoc.
 // Van giu them chan chan "khong them doan nao thi dung" cho chac.
 let CONTENT_SELECTOR = 'div.con';
-let MAX_PAGES = 20;
+
+// Do thuc te: site chia MOI chuong thanh dung 4 trang, bat ke chuong dai ngan.
+// De 10 lam bien an toan. Truoc de 20 -> khi vong lap chay vong tron thi ban 20
+// request va vuot qua thoi gian vBook cho phep.
+let MAX_PAGES = 10;
+
+// Tai mot trang, thu lai MOT lan neu hong.
+// Ly do: vBook chi hien duoc Response.error khi script CHAY XONG. Neu script vang
+// hoac het gio, app nuot loi va chi hien "Khong the tai noi dung." - dung cai nguoi
+// dung gap. Nen o day uu tien chay xong voi noi dung thieu hon la de no vang.
+function fetchPage(path) {
+    try {
+        let doc = getDoc(path);
+        if (doc) {
+            return doc;
+        }
+    } catch (e) {
+    }
+    try {
+        return getDoc(path);
+    } catch (e) {
+        return null;
+    }
+}
 
 // Bo duoi '-<n>' de lay URL trang dau, roi tu dung lai tung trang.
 // An toan hon ghep chuoi tuong doi tu href cua the <a>.
@@ -140,14 +163,22 @@ function execute(url) {
         pages++;
         let path = pageUrl(base, page);
 
-        let doc = getDoc(path);
+        let doc = fetchPage(path);
         if (!doc) {
             // Mat mang hoac bi chan giua chung: tra ve phan da lay con hon bo trang
             console.log('[chap] không tải được ' + path + ', dừng ở ' + all.length + ' đoạn');
             break;
         }
 
-        let got = grabPage(doc);
+        // Mot trang loi khong duoc phep giet ca chuong: co noi dung thieu van hon
+        // la de script vang roi app hien "Khong the tai noi dung."
+        let got = [];
+        try {
+            got = grabPage(doc);
+        } catch (e) {
+            console.log('[chap] lỗi khi đọc ' + path + ': ' + e);
+            break;
+        }
         if (got.length === 0) {
             break;
         }

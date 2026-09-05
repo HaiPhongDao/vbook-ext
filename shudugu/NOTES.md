@@ -400,6 +400,29 @@ không còn tác dụng cho TTS — nhưng hiển thị thì không bao giờ h�
 
 ---
 
+## Giới thiệu truyện nằm ở `.des`, KHÔNG phải thẻ meta
+
+**Lỗi sửa ở v10.** Bản đầu lấy giới thiệu từ `<meta name="description">` vì lúc khảo
+sát tôi dò `.intro` / `.desc` / `#intro` / `.summary` đều rỗng nên tưởng trang không có
+khối giới thiệu riêng.
+
+Thẻ meta đó chỉ chứa **chữ SEO của site**, dạng
+`速读谷提供<tác giả>创作的<thể loại>《<tên truyện>》最新章节在线阅读...` — người dùng mở
+mục giới thiệu ra chỉ thấy quảng cáo của site, không có nội dung truyện.
+
+Khối thật là **`<div class="des bb">`**, chia sẵn bằng thẻ `<p>`. Dùng selector `.des`
+(bỏ `bb`) để còn chạy nếu site đổi class phụ. Nối các đoạn bằng `<br>`.
+
+Đo trên 4 truyện: 27 / 105 / 171 / 289 ký tự, 2-8 đoạn, không truyện nào bị cắt cụt,
+không có link "xem thêm".
+
+**Bài học:** danh sách selector phỏng đoán (`.intro`, `.desc`, `.summary`…) không khớp
+thì đừng kết luận "trang không có". Hãy quét **mọi** thẻ có class kèm độ dài văn bản
+rồi nhìn cái dài nhất — cách đó tìm ra `.des` ngay, trong khi dò tên phổ biến thì trượt
+hoàn toàn.
+
+---
+
 ## Bốn cái bẫy — đọc trước khi sửa
 
 **1. Tìm kiếm không nằm ở đường dẫn đoán được.**

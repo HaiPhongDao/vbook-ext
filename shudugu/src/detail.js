@@ -34,9 +34,27 @@ function execute(url) {
         cover = absImg(doc.select('img').attr('src'));
     }
 
-    // Trang khong co khoi gioi thieu rieng - noi dung do nam o the meta.
-    let description = doc.select('meta[name=description]').attr('content');
-    description = description ? description.trim() : '';
+    // Gioi thieu truyen nam trong <div class="des bb">, chia san bang the <p>.
+    //
+    // TRUOC DAY lay tu <meta name="description"> va do la SAI: the meta chi chua
+    // chu SEO cua site ("速读谷提供X创作的Y最新章节在线阅读..."), khong phai gioi
+    // thieu truyen. Nguoi dung thay o muc gioi thieu toan chu quang cao cua site.
+    // Chon '.des' (khong kem 'bb') de con chay neu site doi class phu.
+    let parts = [];
+    doc.select('.des p').forEach(p => {
+        let t = p.text();
+        if (t && t.trim().length > 0) {
+            parts.push(t.trim());
+        }
+    });
+
+    let description = parts.join('<br>');
+
+    // Khong co the <p> ben trong -> lay thang text ca khoi
+    if (description.length === 0) {
+        let raw = doc.select('.des').text();
+        description = raw ? raw.trim() : '';
+    }
 
     // <span> dau la trang thai (已完结 / 连载), <span> sau la the loai
     let bits = [];
