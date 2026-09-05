@@ -14,6 +14,17 @@
       "description": "Đọc truyện raw trên 69书吧 (69shuba)",
       "type": "chinese_novel",
       "locale": "zh_CN"
+    },
+    {
+      "name": "速读谷 (shudugu)",
+      "author": "Poi",
+      "path": "https://raw.githubusercontent.com/HaiPhongDao/vbook-ext/main/shudugu/plugin.zip",
+      "version": 6,
+      "source": "https://www.shudugu.org",
+      "icon": "https://raw.githubusercontent.com/HaiPhongDao/vbook-ext/main/shudugu/icon.png",
+      "description": "Đọc truyện raw tiếng Trung giản thể trên 速读谷 (shudugu.org)",
+      "type": "chinese_novel",
+      "locale": "zh_CN"
     }
   ]
 }

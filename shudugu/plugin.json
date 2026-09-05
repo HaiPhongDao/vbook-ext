@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "id": "shudugu",
+    "name": "速读谷 (shudugu)",
+    "author": "Poi",
+    "version": "6",
+    "source": "https://www.shudugu.org",
+    "regexp": "(www\\.)?(shudugu|sudugu)\\.org/\\d+(/\\d+\\.html)?/?",
+    "description": "Đọc truyện raw tiếng Trung giản thể trên 速读谷 (shudugu.org)",
+    "locale": "zh_CN",
+    "language": "javascript",
+    "type": "chinese_novel"
+  },
+  "script": {
+    "home": "home.js",
+    "genre": "genre.js",
+    "detail": "detail.js",
+    "search": "search.js",
+    "toc": "toc.js",
+    "chap": "chap.js"
+  },
+  "config": {
+    "MIN_CHAPTERS": {
+      "title": "Số chương tối thiểu",
+      "subtitle": "Áp dụng khi duyệt danh sách. Không lọc khi tìm kiếm.",
+      "default": "Không lọc",
+      "values": ["Không lọc", "100 chương", "200 chương", "300 chương", "500 chương", "1000 chương"],
+      "mode": "select",
+      "format": "single"
+    },
+    "MERGE_TTS": {
+      "title": "Gộp đoạn cho TTS",
+      "subtitle": "Ít đoạn thì TTS đọc đỡ ngắt, nhưng đọc bằng mắt sẽ thưa dòng hơn",
+      "default": "Giữ nguyên đoạn",
+      "values": ["Giữ nguyên đoạn", "Gộp nhẹ (300)", "Gộp vừa (600)", "Gộp mạnh (1200)"],
+      "mode": "select",
+      "format": "single"
+    }
+  }
+}
