@@ -1,0 +1,85 @@
+BỘ QT CẢI THIỆN THẬT — cho VBook
+================================
+Khác với bản dọn rác lần trước (chỉ là vệ sinh, không đổi gì khi đọc),
+bộ này sửa một lỗi CÓ HỆ THỐNG và đo được.
+
+
+LỖI LÀ GÌ
+---------
+Truyện mạng Trung Quốc rất hay dùng chữ biến thể mà từ điển của bạn không có.
+Ví dụ chính trong câu bạn đưa:
+
+    这幺多年     幺 là cách gõ khác của 么 (bản Đài Loan)
+
+Từ điển của bạn có 这么 nhưng KHÔNG có 这幺. Nên nó bị tách làm ba mảnh:
+    这 = cái này  +  幺 = yêu  +  多年 = nhiều năm
+    -> "cái này yêu nhiều năm"
+
+Đây không phải lỗi lẻ. Đếm trên chính từ điển của bạn:
+
+    么 -> 幺      thiếu 13.827 mục
+    么 -> 麼      thiếu 13.805 mục
+    你 -> 妳      thiếu 17.936 mục   (nữ tính "ngươi", truyện ngôn tình)
+    他 -> 祂      thiếu 21.139 mục   (thần linh)
+    它 -> 牠      thiếu  7.635 mục   (động vật)
+    ------------------------------------------
+    tổng         74.342 mục
+
+Mỗi mục thiếu là một chỗ câu văn bị vỡ thành từng chữ rời.
+
+
+ĐÃ LÀM GÌ
+---------
+VietPhrase.txt  813.735 -> 888.077 mục (32,7 MB)
+    = bản đã dọn rác  +  74.342 mục biến thể tier1
+
+Sinh theo quy tắc: lấy mọi mục có chữ chuẩn, tạo bản chữ biến thể,
+CHỈ THÊM khi bản biến thể chưa có sẵn. Không mục gốc nào bị đè.
+
+4 file còn lại giữ nguyên như bản dọn lần trước.
+
+
+KẾT QUẢ TRÊN CHÍNH CÂU CỦA BẠN
+------------------------------
+Nguồn:  他就是那种「别人家的孩子」，这幺多年只要谈起儿子，毛晓琴就是一脸的骄傲。
+
+trước:  ... cái này YÊU nhiều năm ... CỌNG LÔNG HIỂU ĐÀN chính là vẻ mặt kiêu ngạo
+sau :   ... NHIỀU NĂM NHƯ VẬY ... cọng lông hiểu đàn chính là vẻ mặt kiêu ngạo
+stv :   ... như vậy nhiều năm ... mao hiểu đàn chính là gương mặt kiêu ngạo
+
+Kiểm tra thêm:
+    这幺多年 -> nhiều năm như vậy       那幺 -> như vậy
+    为什幺   -> vì cái gì               祂的  -> hắn
+
+
+HAI LỖI CÒN LẠI TRONG CÂU ĐÓ — CẦN CÁCH KHÁC
+--------------------------------------------
+1. 毛晓琴 -> "cọng lông hiểu đàn"
+   Tên nhân vật không có trong Name.txt nên bị tách: 毛=cọng lông, 晓=hiểu, 琴=đàn.
+   Không có cách nào sửa bằng từ điển chung — tên riêng là theo từng truyện.
+   Đây đúng chỗ cần Name của sangtacviet. Dùng script stv-names.ps1 lấy Name
+   của truyện đang đọc rồi nạp vào "từ điển riêng" của VBook.
+   Thêm được 毛晓琴=Mao Hiểu Cầm thì câu ra đúng (và đúng hơn sangtacviet,
+   vì 琴 âm Hán Việt là "cầm", sangtacviet trả "đàn" là nghĩa thông tục).
+
+2. 别人家的孩子 -> "hài tử của người khác"
+   Mục này CÓ trong từ điển, chỉ là dịch cứng. Nghĩa tự nhiên là "con nhà người ta".
+   Loại này không tự động sửa hàng loạt được — phải người đọc thấy chối rồi sửa tay.
+   Trong VBook bạn bấm giữ vào cụm đó rồi sửa, nó vào từ điển riêng.
+
+
+TUỲ CHỌN: tuychon/tier2-phon-the.txt  (61.443 mục)
+--------------------------------------------------
+Biến thể phồn thể: 里->裡/裏, 着->著.
+CHỈ trộn thêm nếu bạn đọc nguồn phồn thể (truyện Đài/Hồng Kông).
+Nếu chỉ đọc giản thể thì đừng thêm — phình file vô ích.
+Lưu ý 著 còn nghĩa "nổi tiếng/viết" nên nhóm này rủi ro hơn tier1.
+
+
+CẢNH BÁO HIỆU NĂNG
+------------------
+VietPhrase tăng từ 29,5 MB lên 32,7 MB (+9%). VBook nạp cả file vào bộ nhớ.
+Máy yếu thì để ý lúc mở truyện lần đầu. Thấy chậm thì quay lại bản ở
+D:\ClaudeCode\qt\out\ (đã dọn, chưa thêm biến thể).
+
+Bản gốc chưa đụng gì: D:\ClaudeCode\qt\orig\
