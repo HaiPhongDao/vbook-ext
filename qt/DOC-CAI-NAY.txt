@@ -30,8 +30,8 @@ Mỗi mục thiếu là một chỗ câu văn bị vỡ thành từng chữ rờ
 
 ĐÃ LÀM GÌ
 ---------
-VietPhrase.txt  813.735 -> 888.077 mục (32,7 MB)
-    = bản đã dọn rác  +  74.342 mục biến thể tier1
+VietPhrase.txt  813.735 -> 888.087 mục (32,7 MB)
+    = bản đã dọn rác  +  74.342 mục biến thể tier1  +  14 dòng vá tay (patches.txt)
 
 Sinh theo quy tắc: lấy mọi mục có chữ chuẩn, tạo bản chữ biến thể,
 CHỈ THÊM khi bản biến thể chưa có sẵn. Không mục gốc nào bị đè.
@@ -66,6 +66,23 @@ HAI LỖI CÒN LẠI TRONG CÂU ĐÓ — CẦN CÁCH KHÁC
    Mục này CÓ trong từ điển, chỉ là dịch cứng. Nghĩa tự nhiên là "con nhà người ta".
    Loại này không tự động sửa hàng loạt được — phải người đọc thấy chối rồi sửa tay.
    Trong VBook bạn bấm giữ vào cụm đó rồi sửa, nó vào từ điển riêng.
+
+
+BẢN VÁ TAY — D:\ClaudeCode\qt\patches.txt   (thêm 2026-09-21)
+------------------------------------------------------------
+Nơi ghi các sửa rút ra từ câu dịch lỗi bạn gửi. build_final.py áp dụng sau cùng,
+đè lên mọi thứ. Hiện 14 dòng, gom quanh một lỗi: trợ từ hỏi đứng một mình cuối câu.
+
+    幺  yêu     -> sao|yêu     ...có nhiều bạo lợi yêu?   ->  ...bạo lợi sao?
+    么  a|sao   -> sao|a       ...rất tốt a.              ->  ...rất tốt sao.
+    麼  cái gì  -> sao|cái gì  câu hỏi có/không bị đổi thành câu hỏi "cái gì"
+
+Kèm 9 cụm xưng hô "út" (幺妹=em gái út, 幺叔=chú út...) và 么么哒=chụt chụt:
+đổi 幺/么 đơn lẻ sẽ làm các cụm chưa có trong từ điển sai theo kiểu mới
+("yêu muội" thành "sao muội"), nên phải chặn trước.
+
+Muốn tự kiểm một câu trước/sau:
+    python D:\ClaudeCode\qt\sim.py --dir orig --dir final "câu tiếng Trung"
 
 
 TUỲ CHỌN: tuychon/tier2-phon-the.txt  (61.443 mục)
