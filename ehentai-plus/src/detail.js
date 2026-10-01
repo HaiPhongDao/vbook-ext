@@ -73,6 +73,7 @@ function execute(url) {
             format: "comic",
             ongoing: /ongoing|連載|连载/i.test(meta.title + " " + meta.jp),
             nsfw: true,
+            locale: galleryLocale(meta),
             genres: genres,
             suggests: suggests,
             comment: { title: "Bình luận", input: readerUrl(k), script: "comment.js" }

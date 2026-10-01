@@ -14,6 +14,15 @@ var EH_LANG_CODE = {
     chinese: "ZH", english: "EN", japanese: "JP", korean: "KO", vietnamese: "VI", spanish: "ES",
     russian: "RU", french: "FR", thai: "TH", german: "DE", portuguese: "PT", italian: "IT", indonesian: "ID"
 };
+// mã ngôn ngữ cho vBook (dịch ảnh / dịch chữ cần biết ngôn ngữ gốc); không có tag ngôn ngữ = tiếng Nhật
+var EH_LANG_ISO = {
+    chinese: "zh-CN", japanese: "ja", korean: "ko", english: "en", vietnamese: "vi", spanish: "es",
+    russian: "ru", french: "fr", thai: "th", german: "de", portuguese: "pt", italian: "it", indonesian: "id"
+};
+function galleryLocale(m) {
+    var ls = langsOf(m);
+    return ls.length ? (EH_LANG_ISO[ls[0]] || "global") : "ja";
+}
 var EH_LANG_META = { "translated": 1, "rewrite": 1, "text cleaned": 1, "speechless": 1 };
 var EH_NS_SHORT = {
     f: "female", m: "male", x: "mixed", o: "other", a: "artist", g: "group", p: "parody",
