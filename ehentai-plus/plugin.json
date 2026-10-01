@@ -3,7 +3,7 @@
     "id": "ehentai-plus",
     "name": "E-Hentai Plus",
     "author": "Poi",
-    "version": 2,
+    "version": 3,
     "source": "https://e-hentai.org",
     "regexp": "e-hentai\\.org/g/\\d+/[0-9a-f]+",
     "description": "E-Hentai: Top hôm qua / tuần / tháng / năm / mọi lúc, đang hot, lọc theo thể loại, ngôn ngữ, rating, tag",
@@ -89,6 +89,17 @@
       "default": "false",
       "mode": "toggle"
     },
+    "eh_img_mode": {
+      "title": "Cách tải ảnh",
+      "subtitle": "Tải trước cả chương: ổn định, mở chương chậm hơn vài giây. Từng ảnh khi đọc: nhanh hơn nhưng có thể không chạy trên mọi bản vBook",
+      "default": "Tải trước cả chương",
+      "values": [
+        "Tải trước cả chương",
+        "Từng ảnh khi đọc"
+      ],
+      "mode": "select",
+      "format": "single"
+    },
     "thread_num": {
       "title": "Số luồng tải ảnh",
       "subtitle": "Để thấp để tránh bị E-Hentai chặn IP",
@@ -98,7 +109,7 @@
     },
     "delay": {
       "title": "Giãn cách giữa các request (ms)",
-      "default": "200",
+      "default": "100",
       "mode": "input",
       "format": "number"
     }

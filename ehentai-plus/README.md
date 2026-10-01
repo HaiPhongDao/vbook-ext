@@ -21,12 +21,12 @@ Hoặc tải `plugin.zip` rồi cài từ trong vBook.
 | Tìm kiếm | Cú pháp tìm kiếm của E-Hentai: `f:glasses`, `artist:xxx`, `-netorare` |
 | Chi tiết | Tag theo nhóm (bấm để tìm), gợi ý cùng tác giả / nhóm / parody / người đăng, bình luận |
 | Mục lục | Mỗi chương = 1 trang thumbnail (20–40 ảnh) |
-| Đọc | Ảnh lấy lười qua `img.js` — đọc tới đâu tải tới đó; tự bỏ qua màn cảnh báo nội dung |
+| Đọc | Mặc định lấy sẵn link ảnh cả chương qua API `showpage`; tuỳ chọn lấy từng ảnh khi đọc qua `img.js`. Tự bỏ qua màn cảnh báo nội dung |
 
 ## Tuỳ chọn
 
 Thể loại cho các tab Top, ngôn ngữ, rating tối thiểu, ẩn AI generated, blacklist tag,
-ưu tiên tiêu đề tiếng Nhật, số luồng tải ảnh, giãn cách request.
+ưu tiên tiêu đề tiếng Nhật, cách tải ảnh, số luồng tải ảnh, giãn cách request.
 
 ## Ghi chú
 
