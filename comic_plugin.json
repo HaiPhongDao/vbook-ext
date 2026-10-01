@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "author": "Poi",
+    "description": "Repo extension truyện tranh riêng"
+  },
+  "data": [
+    {
+      "name": "E-Hentai Plus",
+      "author": "Poi",
+      "path": "https://raw.githubusercontent.com/HaiPhongDao/vbook-ext/main/ehentai-plus/plugin.zip",
+      "version": 1,
+      "source": "https://e-hentai.org",
+      "icon": "https://raw.githubusercontent.com/HaiPhongDao/vbook-ext/main/ehentai-plus/icon.png",
+      "description": "E-Hentai: Top hôm qua / tuần / tháng / năm / mọi lúc, lọc thể loại, ngôn ngữ, rating, tag",
+      "tag": "nsfw",
+      "type": "comic",
+      "locale": "en_US"
+    }
+  ]
+}

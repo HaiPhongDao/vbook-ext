@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "id": "ehentai-plus",
+    "name": "E-Hentai Plus",
+    "author": "Poi",
+    "version": 1,
+    "source": "https://e-hentai.org",
+    "regexp": "e-hentai\\.org/g/\\d+/[0-9a-f]+",
+    "description": "E-Hentai: Top hôm qua / tuần / tháng / năm / mọi lúc, đang hot, lọc theo thể loại, ngôn ngữ, rating, tag",
+    "locale": "en_US",
+    "language": "javascript",
+    "type": "comic",
+    "tag": "nsfw",
+    "nsfw": true
+  },
+  "script": {
+    "home": "home.js",
+    "genre": "genre.js",
+    "search": "search.js",
+    "detail": "detail.js",
+    "toc": "toc.js",
+    "chap": "chap.js"
+  },
+  "config": {
+    "eh_cats": {
+      "title": "Thể loại cho các tab Top",
+      "subtitle": "Để trống = tất cả. Chỉ áp dụng cho các tab Top ở trang Khám phá",
+      "default": "",
+      "values": [
+        "Doujinshi",
+        "Manga",
+        "Artist CG",
+        "Game CG",
+        "Western",
+        "Non-H",
+        "Image Set",
+        "Cosplay",
+        "Asian Porn",
+        "Misc"
+      ],
+      "mode": "select",
+      "format": "multiple"
+    },
+    "eh_lang": {
+      "title": "Ngôn ngữ",
+      "subtitle": "Chỉ hiện truyện thuộc ngôn ngữ này",
+      "default": "Tất cả",
+      "values": [
+        "Tất cả",
+        "Chinese",
+        "English",
+        "Japanese",
+        "Korean",
+        "Vietnamese",
+        "Spanish",
+        "Russian",
+        "French",
+        "Thai"
+      ],
+      "mode": "select",
+      "format": "single"
+    },
+    "eh_min_rating": {
+      "title": "Rating tối thiểu",
+      "default": "0",
+      "values": [
+        "0",
+        "3.5",
+        "4.0",
+        "4.5"
+      ],
+      "mode": "select",
+      "format": "single"
+    },
+    "eh_hide_ai": {
+      "title": "Ẩn truyện AI generated",
+      "default": "false",
+      "mode": "toggle"
+    },
+    "eh_blacklist": {
+      "title": "Blacklist tag / từ khoá",
+      "subtitle": "Cách nhau dấu phẩy. Viết tắt: f: m: x: o: a: g: p: c: l: — vd: guro, m:yaoi",
+      "default": "",
+      "mode": "input",
+      "format": "text"
+    },
+    "eh_jp_title": {
+      "title": "Ưu tiên tiêu đề tiếng Nhật",
+      "default": "false",
+      "mode": "toggle"
+    },
+    "thread_num": {
+      "title": "Số luồng tải ảnh",
+      "subtitle": "Để thấp để tránh bị E-Hentai chặn IP",
+      "default": "3",
+      "mode": "input",
+      "format": "number"
+    },
+    "delay": {
+      "title": "Giãn cách giữa các request (ms)",
+      "default": "200",
+      "mode": "input",
+      "format": "number"
+    }
+  }
+}
