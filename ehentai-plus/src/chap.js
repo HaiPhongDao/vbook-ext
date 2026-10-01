@@ -46,9 +46,13 @@ function execute(url) {
         var k = galleryKey(url);
         if (!k) return Response.error("Link gallery không hợp lệ");
         var pm = /[?&]p=(\d+)/.exec(String(url));
-        var html = getText(galleryUrl(k, pm ? parseInt(pm[1], 10) : 0));
+        var pg = pm ? parseInt(pm[1], 10) : 0;
+        var html = galleryHtml(k, pg ? "p=" + pg : "");
         var doc = Html.parse(html);
         checkGalleryPage(html, doc);
+        if (pg > 0 && pageStart(doc) === 1) {
+            return Response.error("E-Hentai trả về trang đầu thay vì trang " + (pg + 1) + ". Thử tải lại chương.");
+        }
 
         var links = doc.select("#gdt a[href*='/s/']");
         var pages = [], seen = {};

@@ -5,7 +5,7 @@ function execute(url) {
     try {
         var k = galleryKey(url);
         if (!k) return Response.error("Link gallery không hợp lệ");
-        var html = getText(galleryUrl(k, 0));
+        var html = galleryHtml(k, "");
         var doc = Html.parse(html);
         checkGalleryPage(html, doc);
 

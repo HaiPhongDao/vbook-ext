@@ -3,7 +3,7 @@
     "id": "ehentai-plus",
     "name": "E-Hentai Plus",
     "author": "Poi",
-    "version": 3,
+    "version": 4,
     "source": "https://e-hentai.org",
     "regexp": "e-hentai\\.org/g/\\d+/[0-9a-f]+",
     "description": "E-Hentai: Top hôm qua / tuần / tháng / năm / mọi lúc, đang hot, lọc theo thể loại, ngôn ngữ, rating, tag",

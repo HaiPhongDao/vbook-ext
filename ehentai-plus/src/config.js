@@ -107,15 +107,11 @@ function galleryKey(url) {
     var m = /\/g\/(\d+)\/([0-9a-f]{10})/.exec(String(url || ""));
     return m ? { gid: parseInt(m[1], 10), token: m[2] } : null;
 }
-// trang gallery chuẩn; p = trang thumbnail (0-based). nw=always bỏ qua màn cảnh báo nội dung.
-function galleryUrl(k, p) {
-    return EH + "/g/" + k.gid + "/" + k.token + "/?" + (p ? "p=" + p + "&" : "") + "nw=always";
-}
 function readerUrl(k) { return EH + "/g/" + k.gid + "/" + k.token + "/"; }
 
 // ---------- mạng ----------
-function getText(url) {
-    var r = fetch(url);
+function getText(url, headers) {
+    var r = headers ? fetch(url, { headers: headers }) : fetch(url);
     if (!r || !r.ok) throw new Error("Không tải được trang (HTTP " + (r ? r.status : "?") + ")");
     var t = String(r.text());
     if (/temporarily banned|IP address has been/i.test(t.substring(0, 3000))) {
@@ -369,6 +365,29 @@ function pageTags(doc) {
     }
     return tags;
 }
+// ---------- tải trang gallery, vượt màn "Content Warning" ----------
+// LƯU Ý: không gắn nw=always vào URL có p= / hc= — E-Hentai sẽ bỏ mất tham số đó và trả về trang đầu.
+// Thay vào đó gửi cookie nw=1 (giống EhViewer); nếu vẫn gặp cảnh báo thì ghé ?nw=always một lần rồi tải lại.
+var EH_NW_HEADERS = { "Cookie": "nw=1" };
+function isWarningPage(html) {
+    return html.indexOf("id=\"gdt\"") < 0 && /Content Warning|nw=always|nw=session/i.test(html);
+}
+function galleryHtml(k, query) {
+    var url = readerUrl(k) + (query ? "?" + query : "");
+    var html = getText(url, EH_NW_HEADERS);
+    if (isWarningPage(html)) {
+        try { getText(readerUrl(k) + "?nw=always", EH_NW_HEADERS); } catch (e) { /* bỏ qua */ }
+        html = getText(url, EH_NW_HEADERS);
+        if (isWarningPage(html)) throw new Error("Gallery có cảnh báo nội dung, chưa vượt qua được. Mở gallery một lần trên web rồi thử lại.");
+    }
+    return html;
+}
+// số thứ tự ảnh đầu tiên của trang thumbnail ("Showing 41 - 60 of 915 images" → 41)
+function pageStart(doc) {
+    var m = /Showing\s+([\d,]+)\s*-/i.exec(cellText(doc, ".gpc"));
+    return m ? parseInt(m[1].replace(/,/g, ""), 10) : 0;
+}
+
 function checkGalleryPage(html, doc) {
     if (/This gallery has been removed|Gallery not found|Key missing|pining for the fjords/i.test(html.substring(0, 20000))) {
         throw new Error("Gallery đã bị xoá hoặc không còn tồn tại.");

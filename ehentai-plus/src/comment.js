@@ -5,7 +5,7 @@ function execute(input, next) {
     try {
         var k = galleryKey(input);
         if (!k) return Response.success([], "");
-        var doc = getDoc(galleryUrl(k, 0) + "&hc=1");   // hc=1: hiện tất cả bình luận
+        var doc = Html.parse(galleryHtml(k, "hc=1"));   // hc=1: hiện tất cả bình luận
         var cs = doc.select("#cdiv .c1");
         var out = [];
         for (var i = 0; i < count(cs); i++) {
